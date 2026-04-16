@@ -1,0 +1,77 @@
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Product Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/subgraph-browse/product-service/cmd",
+            "cwd": "${workspaceFolder}/subgraph-browse/product-service",
+            "env": {
+                "GO111MODULE": "on"
+            },
+            "args": [],
+            "showLog": true,
+            "trace": "verbose"
+        },
+        {
+            "name": "Debug Current Go File",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "GO111MODULE": "on"
+            },
+            "args": [],
+            "showLog": true
+        },
+        {
+            "name": "Debug Go Package",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/${input:packagePath}",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "GO111MODULE": "on"
+            },
+            "args": [],
+            "showLog": true
+        },
+        {
+            "name": "Debug Go Tests",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/${input:packagePath}",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "GO111MODULE": "on"
+            },
+            "args": [
+                "-test.v"
+            ],
+            "showLog": true
+        },
+        {
+            "name": "Attach to Process",
+            "type": "go",
+            "request": "attach",
+            "mode": "local",
+            "processId": "${command:pickProcess}",
+            "showLog": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "packagePath",
+            "description": "Package path relative to workspace root",
+            "default": "subgraph-browse/product-service/cmd",
+            "type": "promptString"
+        }
+    ]
+}

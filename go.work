@@ -1,0 +1,9 @@
+go 1.25.1
+
+use (
+	./shared/appinfo
+	./shared/config
+	./shared/gin
+	./shared/httpclient
+	./subgraph-browse/product-service
+)
