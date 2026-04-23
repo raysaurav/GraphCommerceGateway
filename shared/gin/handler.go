@@ -83,6 +83,15 @@ func (hi *HandlerInitilization) RegisterHandler(router *gin.Engine) {
 			"status": "ok",
 		})
 	})
+
+	router.Use(UUIDMiddleware())
+	router.Use(GeoIpMiddleware())
+	router.Use(CustomerIdMiddleware())
+	router.Use(AccessTokenMiddleware())
+	router.Use(AppSessionIDMiddleware())
+	router.Use(BasketIdMiddleware())
+	router.Use(AuthorizationMiddleware())
+	router.Use(GinContextToContextMiddleware())
 }
 
 type responseCaptureWriter struct {

@@ -3,7 +3,9 @@ go 1.25.1
 use (
 	./shared/appinfo
 	./shared/config
+	./shared/constant
 	./shared/gin
 	./shared/httpclient
+	./shared/sfccauthentication
 	./subgraph-browse/product-service
 )

@@ -1,10 +1,12 @@
 package gin
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/raysaurav/GraphCommerceGateway/shared/constant"
 )
 
 // AppError represents a structured API error.
@@ -18,6 +20,38 @@ type AppError struct {
 func (e *AppError) Error() string {
 	return e.Message
 }
+
+type (
+	// Define a custom type for the context key
+	correlationIDKeyType string
+	// Define a custom type for the context key
+	contextKey      string
+	usidKey         string
+	accessToken     string
+	customerId      string
+	basketId        string
+	authorization   string
+	environment     string
+	appSessionIDKey string
+)
+
+const (
+	correlationIDKey  correlationIDKeyType = constant.CorrelationIDHeader
+	UsidKey           usidKey              = constant.UsidHeader
+	GinContextKey     contextKey           = constant.GinContextKey
+	XForwardedFor_Key contextKey           = constant.XForwardedForKey
+	AccessToken       accessToken          = constant.ACCESS_TOKEN
+	CustomerID        customerId           = constant.CUSTOMER_ID
+	BasketID          basketId             = constant.BASKET_ID
+	XLivePreview_Key  contextKey           = constant.XLivePreviewKey
+	XChannel_Key      contextKey           = constant.XChannelKey
+	XStoreId_Key      contextKey           = constant.XStoreIdKey
+	XUserAgent_Key    contextKey           = constant.XUserAgentKey
+	XAppSessionID_Key appSessionIDKey      = constant.XAppSessionIDKey
+	Authorization     authorization        = constant.AUTHORIZATION
+	Environment       environment          = constant.ENVIRONMENT
+	XCacheCDNKey      correlationIDKeyType = constant.XCacheCDN
+)
 
 func ErrorHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -87,4 +121,86 @@ func GlobalExceptionHandler() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func UUIDMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		accessToken := c.Request.Header.Get(string(UsidKey))
+		ctx := context.WithValue(c.Request.Context(), UsidKey, accessToken)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func GeoIpMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		xForwardedFor := c.Request.Header.Get("x-forwarded-for")
+		ctx := context.WithValue(c.Request.Context(), XForwardedFor_Key, xForwardedFor)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func CustomerIdMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		customerId := c.Request.Header.Get(string(CustomerID))
+		ctx := context.WithValue(c.Request.Context(), CustomerID, customerId)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+func AccessTokenMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		accessToken := c.Request.Header.Get(string(AccessToken))
+		ctx := context.WithValue(c.Request.Context(), AccessToken, accessToken)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func AuthorizationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authorization := c.Request.Header.Get(string(Authorization))
+		ctx := context.WithValue(c.Request.Context(), Authorization, authorization)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+func BasketIdMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		basketId := c.Request.Header.Get(string(BasketID))
+		ctx := context.WithValue(c.Request.Context(), BasketID, basketId)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func AppSessionIDMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		appSessionID := c.Request.Header.Get(string(XAppSessionID_Key))
+		ctx := context.WithValue(c.Request.Context(), XAppSessionID_Key, appSessionID)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+func GinContextToContextMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := context.WithValue(c.Request.Context(), GinContextKey, c)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
+	ginContext := ctx.Value(GinContextKey)
+	if ginContext == nil {
+		err := fmt.Errorf("could not retrieve gin.Context")
+		return nil, err
+	}
+	gc, ok := ginContext.(*gin.Context)
+	if !ok {
+		err := fmt.Errorf("gin.Context has wrong type")
+		return nil, err
+	}
+	return gc, nil
 }
