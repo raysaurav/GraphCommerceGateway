@@ -1,8 +1,11 @@
 package gin
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -81,15 +84,26 @@ func ErrorHandler() gin.HandlerFunc {
 func MapJSONData() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if ctx.Request.Method == http.MethodPost {
-			body := make(map[string]interface{})
+			var body map[string]interface{}
 			err := ctx.ShouldBindBodyWithJSON(&body)
 			if err != nil {
+				fmt.Println("Error while JSON Changes", err)
 				ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": "Invalid JSON Format"})
 				return
 			}
 
-			ctx.Next()
+			// Convert sanitized map back to JSON
+			jsonBytes, err := json.Marshal(body)
+			if err != nil {
+				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to process request"})
+				return
+			}
+
+			// CRITICAL: Restore the body for downstream handlers
+			ctx.Request.Body = io.NopCloser(bytes.NewBuffer(jsonBytes))
 		}
+
+		ctx.Next()
 	}
 }
 

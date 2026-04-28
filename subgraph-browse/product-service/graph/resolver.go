@@ -1,7 +1,9 @@
 package graph
 
 //go:generate go tool gqlgen generate
-import "github.com/raysaurav/GraphCommerceGateway/subgraph-browse/product-service/graph/model"
+import (
+	"github.com/raysaurav/GraphCommerceGateway/subgraph-browse/product-service/graph/model"
+)
 
 // This file will not be regenerated automatically.
 //
@@ -10,4 +12,5 @@ import "github.com/raysaurav/GraphCommerceGateway/subgraph-browse/product-servic
 
 type Resolver struct {
 	todos []*model.Todo
+	// BrowseService domain.BrowseService
 }

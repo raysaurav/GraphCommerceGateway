@@ -10,6 +10,11 @@ type NewTodo struct {
 	UserID string `json:"userId"`
 }
 
+type ProductDetails struct {
+	ProductID   string `json:"productId"`
+	ProductName string `json:"productName"`
+}
+
 type Query struct {
 }
 

@@ -4,7 +4,7 @@ package appinfo
 type AppInfo struct {
 	ServiceName string `env:"SERVICE_NAME"`
 	Port        string `env:"PORT,default=8080"`
-	Environment string `env:"ENVIRONMENT,default=dev"`
+	Environment string `env:"ENVIRONMENT,default=release"`
 	Version     string `env:"SERVICE_VERSION"`
 }
 

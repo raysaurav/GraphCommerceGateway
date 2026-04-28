@@ -7,12 +7,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
 )
 
 type HandlerInitilization struct {
-	Svc *http.Server
+	Svc *handler.Server
 }
 
 var (
@@ -20,7 +21,7 @@ var (
 	handlerInitilizationOnce     sync.Once
 )
 
-func NewHandlerInitializer(handlerServer *http.Server) *HandlerInitilization {
+func NewHandlerInitializer(handlerServer *handler.Server) *HandlerInitilization {
 	handlerInitilizationOnce.Do(func() {
 		handlerInitilizationInstance = &HandlerInitilization{
 			Svc: handlerServer,
@@ -71,7 +72,7 @@ func (hi *HandlerInitilization) RegisterHandler(router *gin.Engine) {
 			c.Writer.Write(buffer.Bytes())
 		}()
 		// Run GraphQL
-		hi.Svc.Handler.ServeHTTP(rcw, c.Request)
+		hi.Svc.ServeHTTP(rcw, c.Request)
 	})
 	// GraphQL playground endpoint
 	router.GET("/playground", func(c *gin.Context) {
